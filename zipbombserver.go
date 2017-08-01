@@ -1,4 +1,4 @@
-/* Serves up never-ending compressed zeros via http */
+// Zipbombserver erves up never-ending compressed zeros via http
 package main
 
 /*
@@ -26,11 +26,16 @@ import (
 	humanize "github.com/dustin/go-humanize"
 )
 
-/* BOMBLET holds a compressed chunk of 0's */
+// BOMBLET holds a compressed chunk of 0's
 var BOMBLET []byte
 
 func main() {
 	var (
+		doTLS = flag.Bool(
+			"https",
+			false,
+			"Serve HTTPS instead of plaintext HTTP",
+		)
 		laddr = flag.String(
 			"l",
 			"0.0.0.0:80",
@@ -50,6 +55,16 @@ func main() {
 			"perm",
 			"660",
 			"Octal `permissions` for FCGI socket",
+		)
+		certf = flag.String(
+			"cert",
+			"cert.pem",
+			"TLS certificate `file`",
+		)
+		keyf = flag.String(
+			"key",
+			"key.pem",
+			"TLS key `file`",
 		)
 	)
 	flag.Usage = func() {
@@ -109,6 +124,9 @@ Options:
 			)
 		}
 		err = serveFCGI(*laddr, p)
+	} else if *doTLS {
+		log.Printf("Listening on %v for HTTPS requests", *laddr)
+		err = http.ListenAndServeTLS(*laddr, *certf, *keyf, nil)
 	} else {
 		log.Printf("Listening on %v for HTTP requests", *laddr)
 		err = http.ListenAndServe(*laddr, nil)
@@ -180,7 +198,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	)
 }
 
-/* COMPRESSCHUNK is how many zeros to compress at once */
+// COMPRESSCHUNK is how many zeros to compress at once
 const COMPRESSCHUNK = 1024
 
 /* Compress compresses n bytes, 1k at a time */
