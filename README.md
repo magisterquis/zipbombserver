@@ -26,9 +26,8 @@ FastCGI.
 
 ### HTTP Server
 The HTTP server serves up HTTP requests.  Aside from the body causing clients a
-bit of trouble, it is a nearly totally unremarkable HTTP server.  It's not a
-bad idea to put it behind a reverse proxy (like relayd or nginx) to perform
-TLS termination.
+bit of trouble, it is a nearly totally unremarkable HTTP server.  HTTPS can be
+served with the `-https` flag, using the `-cert` and `-key` flags.
 
 ### FastCGI
 To better integrate with existing setups, zipbombserver can serve FastCGI
