@@ -181,6 +181,14 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/plain")
 	w.WriteHeader(http.StatusOK)
 	tot := 0
+	lstr := fmt.Sprintf(
+		"[%v] %q %v %q",
+		r.RemoteAddr,
+		r.Host,
+		r.Method,
+		r.URL,
+	)
+	log.Printf("%v START", lstr)
 	for {
 		n, err := w.Write(BOMBLET)
 		tot += n
@@ -188,14 +196,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 	}
-	log.Printf(
-		"[%v] %q %v %q %v",
-		r.RemoteAddr,
-		r.Host,
-		r.Method,
-		r.URL,
-		tot,
-	)
+	log.Printf("%v FINISH: %v uncompressed", lstr, tot)
 }
 
 // COMPRESSCHUNK is how many zeros to compress at once
